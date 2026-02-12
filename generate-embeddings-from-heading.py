@@ -14,10 +14,13 @@ from pathlib import Path
 from copy import deepcopy
 
 from dotenv import load_dotenv
-from openai import AzureOpenAI
 
 # Load environment variables from .env
 load_dotenv()
+
+# Import shared embedding client builder (hyphenated module name)
+_client_module = importlib.import_module("embedding-client")
+_build_embedding_client = _client_module._build_embedding_client
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -78,31 +81,7 @@ class EmbeddingSection:
         )
 
 
-# ----------------------------
-# Azure OpenAI client helpers
-# ----------------------------
 
-def _build_client() -> AzureOpenAI:
-    """Build an AzureOpenAI client using AzureKeyCredential.
-
-    Returns:
-        An authenticated AzureOpenAI client.
-    """
-    endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT", "")
-    api_version = os.environ.get("AZURE_OPENAI_API_VERSION", "2024-12-01-preview")
-    api_key = os.environ.get("AZURE_OPENAI_API_KEY", "")
-
-    if not endpoint:
-        raise ValueError("AZURE_OPENAI_ENDPOINT must be set in .env or environment")
-    if not api_key:
-        raise ValueError("AZURE_OPENAI_API_KEY must be set in .env or environment")
-
-    logger.info("Authenticating with AzureKeyCredential")
-    return AzureOpenAI(
-        api_version=api_version,
-        azure_endpoint=endpoint,
-        api_key=api_key,
-    )
 
 
 # ----------------------------
@@ -239,7 +218,7 @@ def generate_embeddings(
     sections = split_oversized_sections(sections)
     logger.info("Sections after splitting oversized: %d", len(sections))
 
-    client = _build_client()
+    client = _build_embedding_client()
 
     # Filter out sections with empty text
     valid_sections = [(i, s) for i, s in enumerate(sections) if s.combined_text.strip()]

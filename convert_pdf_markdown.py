@@ -1,4 +1,5 @@
 
+import os
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import AnalyzeDocumentRequest
 from azure.core.credentials import AzureKeyCredential
@@ -54,8 +55,8 @@ def process_pdf_to_markdown_file(
 if __name__ == "__main__":
     pdf_path = "./resources/B737.pdf"
     output_path = "./resources/B737.md"
-    endpoint = "https://aa-genai-train-foundry.cognitiveservices.azure.com/"
-    key = "REMOVED_KEY"
+    endpoint = os.environ.get("AZURE_DOC_INTELLIGENCE_ENDPOINT", "")
+    key = os.environ.get("AZURE_DOC_INTELLIGENCE_KEY", "")
 
     process_pdf_to_markdown_file(
         pdf_path=pdf_path,
