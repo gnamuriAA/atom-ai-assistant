@@ -110,7 +110,7 @@ def _build_client() -> AzureOpenAI:
 # ----------------------------
 
 MAX_BATCH_SIZE = 16  # Azure OpenAI embedding batch limit
-MAX_TOKEN_CHARS = 20_000  # ~6,000 tokens safety limit (8,192 max for text-embedding-3-small)
+MAX_TOKEN_CHARS = 3_000  # ~1,000 tokens (structured text ≈ 3 chars/token)
 OVERLAP_BLOCKS = 1  # Number of blocks to repeat at sub-section boundaries
 
 
